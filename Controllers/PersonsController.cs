@@ -18,9 +18,9 @@ namespace LoginRegister.Controllers
         }
 
         // GET: UserController
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(string email)
         {
-            var users = _userManager.Users.Where(user => user.Email != "pochta@tut.by");
+            var users = _userManager.Users.Where(user => user.Email != email);
             var userList = new List<UserModelView>();
 
             foreach (var user in await users.ToListAsync())

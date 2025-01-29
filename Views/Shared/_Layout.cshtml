@@ -24,8 +24,9 @@
                             @if (User.IsInRole("Администратор"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Persons" asp-action="Index">Пользователи</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Persons" asp-action="Index" asp-route-email=@User.Identity.Name>Пользователи</a>
                                 </li>
+                                @* <a>Вот что берёт: @User.Identity.Name</a> *@
                             }
                         }
                     </ul>
