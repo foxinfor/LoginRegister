@@ -1,0 +1,32 @@
+﻿@{
+}
+
+<div class="row-mb-5">
+    <div class="col-md-8 mx-auto rounded border p-3">
+        <h2 class="text-center mb-5">Авторизация</h2>
+        <form method="post" asp-action="Login" asp-controller="Account">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label">Email</label>
+                <div class="col-sm-8">
+                    <input class="form-control" name="email" type="text">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label">Пароль</label>
+                <div class="col-sm-8">
+                    <input class="form-control" name="password" type="text">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4 offset-sm-4 d-grid">
+                    <button type="submit" class="btn btn-primary">Войти</button>
+                </div>
+                <div class="col-sm-4 d-grid">
+                    <a class="btn-link mx-auto my-auto" asp-controller="Account" asp-action="Register" role="button">Зарегистрироваться</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
