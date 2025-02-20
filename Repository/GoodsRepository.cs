@@ -20,12 +20,6 @@ namespace LoginRegister.Repository
 
         public void Delete(Goods entity)
         {
-            var localEntity = _applicationDbContext.Goods.Local.FirstOrDefault(x => x.Id == entity.Id);
-            if (localEntity != null)
-            {
-                _applicationDbContext.Entry(localEntity).State = EntityState.Detached;
-            }
-
             _applicationDbContext.Goods.Remove(entity);
             _applicationDbContext.SaveChanges();
         }
