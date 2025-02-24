@@ -12,19 +12,23 @@ namespace LoginRegister.Controllers
         private readonly GoodsRepository _goodsRepository;
         private readonly MailRepository _mailRepository;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly CategoryRepository _categoryRepository;
         private readonly ApplicationDbContext _context;
 
-        public GoodsController(GoodsRepository goodsRepository, MailRepository mailRepository, UserManager<ApplicationUser> userManager, ApplicationDbContext context)
+        public GoodsController(GoodsRepository goodsRepository, MailRepository mailRepository, UserManager<ApplicationUser> userManager,CategoryRepository categoryRepository, ApplicationDbContext context)
         {
             _goodsRepository = goodsRepository;
             _mailRepository = mailRepository;
             _userManager = userManager;
+            _categoryRepository = categoryRepository;
             _context = context;
         }
 
         public IActionResult Index()
         {
             var goodsList = _goodsRepository.GetAll();
+            var categoriesList = _categoryRepository.GetAll();
+            ViewBag.Categories = categoriesList;
             return View(goodsList);
         }
 
