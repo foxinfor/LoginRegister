@@ -31,7 +31,10 @@ namespace LoginRegister.Repository
 
         public IEnumerable<Goods> GetAll()
         {
-            return _applicationDbContext.Goods.AsNoTracking().ToList();
+            return _applicationDbContext.Goods
+                .Include(g => g.Category)
+                .AsNoTracking()
+                .ToList();
         }
 
         public void Update(Goods entity)

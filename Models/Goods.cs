@@ -7,5 +7,8 @@
         public int Count { get; set; }
 
         public string ImageSrc { get; set; }
+
+        public int CategoryId { get; set; } 
+        public virtual Category Category { get; set; } 
     }
 }
