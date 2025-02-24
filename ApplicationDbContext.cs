@@ -13,6 +13,7 @@ namespace LoginRegister
             Database.EnsureCreated();
         }
 
+        public DbSet<Category> Categories { get; set; }
         public DbSet<Mail> Mails { get; set; }
         public DbSet<Goods> Goods { get; set; }
         public DbSet<Message> Messages { get; set; }
