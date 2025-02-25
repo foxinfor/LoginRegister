@@ -5,7 +5,7 @@
 <h3>Вы уверены, что хотите удалить товар '@Model.Name'?</h3>
 
 <div>
-    <h4>Товар</h4>
+    <h4>Детали товара</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">Id</dt>
@@ -14,8 +14,8 @@
         <dd class="col-sm-10">@Model.Name</dd>
         <dt class="col-sm-2">Количество</dt>
         <dd class="col-sm-10">@Model.Count</dd>
-        <dt class="col-sm-2">Img</dt>
-        <dd class="col-sm-10">@Model.ImageSrc</dd>
+        <dt class="col-sm-2">Изображение</dt>
+        <dd class="col-sm-10"><img src="@Model.ImageSrc" alt="@Model.Name" style="max-width: 200px; max-height: 200px;" /></dd>
     </dl>
 </div>
 
@@ -26,3 +26,9 @@
         <a asp-action="Index" class="btn btn-secondary">Назад</a>
     </div>
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

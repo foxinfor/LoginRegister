@@ -2,8 +2,8 @@
 using LoginRegister.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace LoginRegister.Controllers
 {
@@ -15,7 +15,7 @@ namespace LoginRegister.Controllers
         private readonly CategoryRepository _categoryRepository;
         private readonly ApplicationDbContext _context;
 
-        public GoodsController(GoodsRepository goodsRepository, MailRepository mailRepository, UserManager<ApplicationUser> userManager,CategoryRepository categoryRepository, ApplicationDbContext context)
+        public GoodsController(GoodsRepository goodsRepository, MailRepository mailRepository, UserManager<ApplicationUser> userManager, CategoryRepository categoryRepository, ApplicationDbContext context)
         {
             _goodsRepository = goodsRepository;
             _mailRepository = mailRepository;
@@ -34,6 +34,7 @@ namespace LoginRegister.Controllers
 
         public IActionResult Create()
         {
+            ViewBag.Categories = new SelectList(_categoryRepository.GetAll(), "Id", "Name");
             return View();
         }
 
@@ -46,6 +47,7 @@ namespace LoginRegister.Controllers
                 _goodsRepository.Add(model);
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.Categories = new SelectList(_categoryRepository.GetAll(), "Id", "Name", model.CategoryId);
             return View(model);
         }
 
@@ -56,6 +58,8 @@ namespace LoginRegister.Controllers
             {
                 return NotFound();
             }
+
+            ViewBag.Categories = new SelectList(_categoryRepository.GetAll(), "Id", "Name", goods.CategoryId);
             return View(goods);
         }
 
@@ -67,12 +71,16 @@ namespace LoginRegister.Controllers
             {
                 var existingGood = _goodsRepository.Get(model.Id);
 
+                if (existingGood == null)
+                {
+                    return NotFound();
+                }
+
                 if (existingGood.Count == 0 && model.Count > 0)
                 {
                     var messages = await _context.Messages
                         .Where(m => m.GoodId == model.Id)
                         .ToListAsync();
-
 
                     foreach (var message in messages)
                     {
@@ -80,7 +88,7 @@ namespace LoginRegister.Controllers
                         {
                             Email = message.RecipientEmail,
                             Context = $"Уведомление о появлении {existingGood.Name} в наличии",
-                            CreatedAt = DateTime.UtcNow 
+                            CreatedAt = DateTime.UtcNow
                         };
 
                         await _mailRepository.AddMailAsync(mail);
@@ -89,10 +97,15 @@ namespace LoginRegister.Controllers
 
                 existingGood.Name = model.Name;
                 existingGood.Count = model.Count;
+                existingGood.Color = model.Color; 
+                existingGood.Size = model.Size; 
+                existingGood.Gender = model.Gender;
 
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewBag.Categories = new SelectList(_categoryRepository.GetAll(), "Id", "Name", model.CategoryId); 
             return View(model);
         }
 
