@@ -47,7 +47,7 @@
                     }
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <button class="btn btn-info" onclick="subscribe(@item.Id)">Подписаться</button>
+                        <button class="btn btn-info" onclick="subscribe(@item.Id)">Добавить в избранное</button>
                     }
                 </td>
             </tr>
@@ -77,7 +77,7 @@
         });
 
         if (response.ok) {
-            alert('Вы успешно подписались!');
+            alert('Вы добавили товар в избранное!');
         } else {
             alert('Ошибка при подписке. Попробуйте еще раз.');
         }

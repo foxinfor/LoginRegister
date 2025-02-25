@@ -3,22 +3,19 @@ using LoginRegister.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace LoginRegister.Controllers
 {
     public class GoodsController : Controller
     {
         private readonly GoodsRepository _goodsRepository;
-        private readonly MailRepository _mailRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly CategoryRepository _categoryRepository;
         private readonly ApplicationDbContext _context;
 
-        public GoodsController(GoodsRepository goodsRepository, MailRepository mailRepository, UserManager<ApplicationUser> userManager, CategoryRepository categoryRepository, ApplicationDbContext context)
+        public GoodsController(GoodsRepository goodsRepository, UserManager<ApplicationUser> userManager, CategoryRepository categoryRepository, ApplicationDbContext context)
         {
             _goodsRepository = goodsRepository;
-            _mailRepository = mailRepository;
             _userManager = userManager;
             _categoryRepository = categoryRepository;
             _context = context;
@@ -76,25 +73,6 @@ namespace LoginRegister.Controllers
                     return NotFound();
                 }
 
-                if (existingGood.Count == 0 && model.Count > 0)
-                {
-                    var messages = await _context.Messages
-                        .Where(m => m.GoodId == model.Id)
-                        .ToListAsync();
-
-                    foreach (var message in messages)
-                    {
-                        var mail = new Mail
-                        {
-                            Email = message.RecipientEmail,
-                            Context = $"Уведомление о появлении {existingGood.Name} в наличии",
-                            CreatedAt = DateTime.UtcNow
-                        };
-
-                        await _mailRepository.AddMailAsync(mail);
-                    }
-                }
-
                 existingGood.Name = model.Name;
                 existingGood.Count = model.Count;
                 existingGood.Color = model.Color; 
@@ -130,5 +108,16 @@ namespace LoginRegister.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var goods = await _goodsRepository.GetAsync(id);
+            if (goods == null)
+            {
+                return NotFound();
+            }
+            return View(goods);
+        }
+
     }
 }

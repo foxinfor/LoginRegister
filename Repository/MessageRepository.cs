@@ -1,4 +1,5 @@
 ﻿using LoginRegister.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace LoginRegister.Repository
 {
@@ -15,6 +16,11 @@ namespace LoginRegister.Repository
         {
             _context.Messages.Add(message);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Message>> GetAllMessagesAsync()
+        {
+            return await _context.Messages.ToListAsync();
         }
     }
 }

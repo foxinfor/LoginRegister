@@ -5,5 +5,6 @@
         public int Id { get; set; }
         public int GoodId { get; set; }
         public string RecipientEmail { get; set; }
+        public string GoodUrl { get; set; }
     }
 }

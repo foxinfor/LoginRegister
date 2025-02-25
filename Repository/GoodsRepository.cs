@@ -42,5 +42,10 @@ namespace LoginRegister.Repository
             _applicationDbContext.Goods.Update(entity);
             _applicationDbContext.SaveChanges();
         }
+
+        public async Task<Goods> GetAsync(int id)
+        {
+            return await _applicationDbContext.Goods.FindAsync(id);
+        }
     }
 }
