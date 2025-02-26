@@ -48,6 +48,7 @@
                     @if (User.Identity.IsAuthenticated)
                     {
                         <button class="btn btn-info" onclick="subscribe(@item.Id)">Добавить в избранное</button>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Подробнее</a>
                     }
                 </td>
             </tr>
