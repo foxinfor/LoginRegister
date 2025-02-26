@@ -1,0 +1,22 @@
+﻿@model IEnumerable<LoginRegister.Models.Goods>
+
+@foreach (var item in Model)
+{
+    <tr data-category-id="@item.CategoryId">
+        <td>@item.Id</td>
+        <td>@item.Name</td>
+        <td>@item.Count</td>
+        <td><img src="@item.ImageSrc" alt="@item.Name" /></td>
+        <td>
+            @if (User.IsInRole("Администратор"))
+            {
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Редактировать</a>
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
+            }
+            @if (User.Identity.IsAuthenticated)
+            {
+                <button class="btn btn-info" onclick="subscribe(@item.Id)">Добавить в избранное</button>
+            }
+        </td>
+    </tr>
+}

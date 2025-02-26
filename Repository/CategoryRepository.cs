@@ -53,33 +53,24 @@ namespace LoginRegister.Repository
                 .ToListAsync();
         }
 
-        public async Task<List<Category>> GetCategoriesWithHierarchyAsync()
+        public async Task<List<Category>> GetSubCategoriesAsync(int categoryId)
         {
-            var categories = await _applicationDbContext.Categories
-                .AsNoTracking()
-                .ToListAsync();
+            var category = await _applicationDbContext.Categories
+                .Include(c => c.SubCategories)
+                .FirstOrDefaultAsync(c => c.Id == categoryId);
 
-            var categoryDict = categories.ToDictionary(c => c.Id);
+            var subCategories = new List<Category>();
 
-            foreach (var category in categories)
+            if (category != null)
             {
-                if (category.SubCategories == null)
+                subCategories.Add(category);
+                foreach (var subCategory in category.SubCategories)
                 {
-                    category.SubCategories = new List<Category>();
-                }
-
-                if (category.ParentId.HasValue)
-                {
-                    if (!categoryDict[category.ParentId.Value].SubCategories.Any())
-                    {
-                        categoryDict[category.ParentId.Value].SubCategories = new List<Category>();
-                    }
-
-                    categoryDict[category.ParentId.Value].SubCategories.Add(category);
+                    subCategories.AddRange(await GetSubCategoriesAsync(subCategory.Id));
                 }
             }
 
-            return categories.ToList();
+            return subCategories;
         }
     }
 }

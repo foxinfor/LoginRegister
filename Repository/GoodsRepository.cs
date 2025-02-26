@@ -6,10 +6,12 @@ namespace LoginRegister.Repository
     public class GoodsRepository
     {
         private readonly ApplicationDbContext _applicationDbContext;
+        private readonly CategoryRepository _categoryRepository;
 
-        public GoodsRepository(ApplicationDbContext applicationDbContext)
+        public GoodsRepository(ApplicationDbContext applicationDbContext, CategoryRepository categoryRepository)
         {
             _applicationDbContext = applicationDbContext;
+            _categoryRepository = categoryRepository;
         }
 
         public async Task AddAsync(Goods entity)
@@ -43,6 +45,16 @@ namespace LoginRegister.Repository
         {
             _applicationDbContext.Goods.Update(entity);
             await _applicationDbContext.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Goods>> GetByCategoryWithSubcategoriesAsync(int categoryId)
+        {
+            var subCategories = await _categoryRepository.GetSubCategoriesAsync(categoryId);
+            var subcategoryIds = subCategories.Select(c => c.Id).ToList();
+
+            return await _applicationDbContext.Goods
+                .Where(g => subcategoryIds.Contains(g.CategoryId))
+                .ToListAsync();
         }
     }
 }

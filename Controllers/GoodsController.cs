@@ -116,5 +116,21 @@ namespace LoginRegister.Controllers
             }
             return View(goods);
         }
+
+        public async Task<IActionResult> FilterByCategory(int categoryId)
+        {
+            IEnumerable<Goods> goodsList;
+
+            if (categoryId == 0) 
+            {
+                goodsList = await _goodsRepository.GetAllAsync();
+            }
+            else
+            {
+                goodsList = await _goodsRepository.GetByCategoryWithSubcategoriesAsync(categoryId);
+            }
+
+            return PartialView("GoodsList", goodsList);
+        }
     }
 }

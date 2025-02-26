@@ -8,10 +8,10 @@
 </head>
 
 <h1>Список товаров</h1>
+<label for="categorySelect">Выберите категорию: </label>
 
-<label for="categorySelect">Выберите категорию:</label>
 <select id="categorySelect" class="form-select" onchange="filterByCategory(this.value)">
-    <option value="">Все категории</option>
+    <option value="0">Все категории</option>
     @foreach (var category in categories)
     {
         <option value="@category.Id">@category.Name</option>
@@ -60,6 +60,12 @@
 }
 
 <script>
+    async function filterByCategory(categoryId) {
+        const response = await fetch(`/Goods/FilterByCategory?categoryId=${categoryId}`);
+        const goodsListHtml = await response.text();
+        document.getElementById('goodsTableBody').innerHTML = goodsListHtml;
+    }
+
     const userEmail = '@User.Identity.Name';
 
     async function subscribe(goodId) {
@@ -81,17 +87,5 @@
         } else {
             alert('Ошибка при подписке. Попробуйте еще раз.');
         }
-    }
-
-        function filterByCategory(categoryId) {
-        const rows = document.querySelectorAll('#goodsTableBody tr');
-        rows.forEach(row => {
-            const rowCategoryId = row.getAttribute('data-category-id');
-            if (categoryId === "" || rowCategoryId == categoryId) {
-                row.style.display = ''; 
-            } else {
-                row.style.display = 'none'; 
-            }
-        });
     }
 </script>
