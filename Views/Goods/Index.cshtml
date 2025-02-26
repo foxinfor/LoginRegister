@@ -49,7 +49,7 @@
                     }
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <button class="btn btn-info" onclick="subscribe(@item.Id)">Добавить в избранное</button>
+                        <button class="btn btn-info" onclick="subscribe(@item.Id, '@item.ImageSrc')">Добавить в избранное</button>
                         <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Подробнее</a>
                     }
                 </td>
@@ -71,7 +71,7 @@
 
     const userEmail = '@User.Identity.Name';
 
-    async function subscribe(goodId) {
+    async function subscribe(goodId,imageUrl) {
         if (!userEmail) {
             alert('Вы не авторизованы. Пожалуйста, войдите в систему.');
             return;
@@ -82,7 +82,7 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ GoodId: goodId, RecipientEmail: userEmail })
+            body: JSON.stringify({ GoodId: goodId, RecipientEmail: userEmail, ImageUrl: imageUrl})
         });
 
         if (response.ok) {

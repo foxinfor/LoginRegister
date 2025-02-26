@@ -12,7 +12,10 @@ else
     {
         <div>
             @* <p>Email: @message.RecipientEmail</p> *@
-            <p>Товар: <a href="@message.GoodUrl">Ссылка на товар</a></p>
+            <a href="@message.GoodUrl">
+                <img src="@message.ImageUrl"></img>
+            </a>
+            @* <p>Товар: <a href="@message.GoodUrl">Ссылка на товар</a></p> *@
         </div>
     }
 }
