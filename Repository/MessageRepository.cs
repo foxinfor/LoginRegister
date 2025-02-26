@@ -22,5 +22,13 @@ namespace LoginRegister.Repository
         {
             return await _context.Messages.ToListAsync();
         }
+        public async Task<IEnumerable<Message>> GetMessagesByRecipientEmailAsync(string email)
+        {
+            return await _context.Messages
+                .Where(m => m.RecipientEmail == email)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
     }
 }

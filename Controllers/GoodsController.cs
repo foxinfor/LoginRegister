@@ -11,52 +11,50 @@ namespace LoginRegister.Controllers
         private readonly GoodsRepository _goodsRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly CategoryRepository _categoryRepository;
-        private readonly ApplicationDbContext _context;
 
-        public GoodsController(GoodsRepository goodsRepository, UserManager<ApplicationUser> userManager, CategoryRepository categoryRepository, ApplicationDbContext context)
+        public GoodsController(GoodsRepository goodsRepository, UserManager<ApplicationUser> userManager, CategoryRepository categoryRepository)
         {
             _goodsRepository = goodsRepository;
             _userManager = userManager;
             _categoryRepository = categoryRepository;
-            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var goodsList = _goodsRepository.GetAll();
-            var categoriesList = _categoryRepository.GetAll();
+            var goodsList = await _goodsRepository.GetAllAsync();
+            var categoriesList = await _categoryRepository.GetAllAsync();
             ViewBag.Categories = categoriesList;
             return View(goodsList);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewBag.Categories = new SelectList(_categoryRepository.GetAll(), "Id", "Name");
+            ViewBag.Categories = new SelectList(await _categoryRepository.GetAllAsync(), "Id", "Name");
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Goods model)
+        public async Task<IActionResult> Create(Goods model)
         {
             if (ModelState.IsValid)
             {
-                _goodsRepository.Add(model);
+                await _goodsRepository.AddAsync(model);
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.Categories = new SelectList(_categoryRepository.GetAll(), "Id", "Name", model.CategoryId);
+            ViewBag.Categories = new SelectList(await _categoryRepository.GetAllAsync(), "Id", "Name", model.CategoryId);
             return View(model);
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var goods = _goodsRepository.Get(id);
+            var goods = await _goodsRepository.GetAsync(id);
             if (goods == null)
             {
                 return NotFound();
             }
 
-            ViewBag.Categories = new SelectList(_categoryRepository.GetAll(), "Id", "Name", goods.CategoryId);
+            ViewBag.Categories = new SelectList(await _categoryRepository.GetAllAsync(), "Id", "Name", goods.CategoryId);
             return View(goods);
         }
 
@@ -66,8 +64,7 @@ namespace LoginRegister.Controllers
         {
             if (ModelState.IsValid)
             {
-                var existingGood = _goodsRepository.Get(model.Id);
-
+                var existingGood = await _goodsRepository.GetAsync(model.Id);
                 if (existingGood == null)
                 {
                     return NotFound();
@@ -75,21 +72,22 @@ namespace LoginRegister.Controllers
 
                 existingGood.Name = model.Name;
                 existingGood.Count = model.Count;
-                existingGood.Color = model.Color; 
-                existingGood.Size = model.Size; 
+                existingGood.Color = model.Color;
+                existingGood.Size = model.Size;
+                existingGood.CategoryId = model.CategoryId;
                 existingGood.Gender = model.Gender;
 
-                await _context.SaveChangesAsync();
+                await _goodsRepository.UpdateAsync(existingGood); 
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Categories = new SelectList(_categoryRepository.GetAll(), "Id", "Name", model.CategoryId); 
+            ViewBag.Categories = new SelectList(await _categoryRepository.GetAllAsync(), "Id", "Name", model.CategoryId);
             return View(model);
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var goods = _goodsRepository.Get(id);
+            var goods = await _goodsRepository.GetAsync(id);
             if (goods == null)
             {
                 return NotFound();
@@ -99,12 +97,12 @@ namespace LoginRegister.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var goods = _goodsRepository.Get(id);
+            var goods = await _goodsRepository.GetAsync(id);
             if (goods != null)
             {
-                _goodsRepository.Delete(goods);
+                await _goodsRepository.DeleteAsync(goods);
             }
             return RedirectToAction(nameof(Index));
         }
@@ -118,6 +116,5 @@ namespace LoginRegister.Controllers
             }
             return View(goods);
         }
-
     }
 }

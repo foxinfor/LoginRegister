@@ -12,40 +12,37 @@ namespace LoginRegister.Repository
             _applicationDbContext = applicationDbContext;
         }
 
-        public void Add(Goods entity)
+        public async Task AddAsync(Goods entity)
         {
-            _applicationDbContext.Goods.Add(entity);
-            _applicationDbContext.SaveChanges();
+            await _applicationDbContext.Goods.AddAsync(entity);
+            await _applicationDbContext.SaveChangesAsync();
         }
 
-        public void Delete(Goods entity)
+        public async Task DeleteAsync(Goods entity)
         {
             _applicationDbContext.Goods.Remove(entity);
-            _applicationDbContext.SaveChanges();
-        }
-
-        public Goods Get(int id)
-        {
-            return _applicationDbContext.Goods.Find(id);
-        }
-
-        public IEnumerable<Goods> GetAll()
-        {
-            return _applicationDbContext.Goods
-                .Include(g => g.Category)
-                .AsNoTracking()
-                .ToList();
-        }
-
-        public void Update(Goods entity)
-        {
-            _applicationDbContext.Goods.Update(entity);
-            _applicationDbContext.SaveChanges();
+            await _applicationDbContext.SaveChangesAsync();
         }
 
         public async Task<Goods> GetAsync(int id)
         {
-            return await _applicationDbContext.Goods.FindAsync(id);
+            return await _applicationDbContext.Goods
+                .Include(g => g.Category)
+                .FirstOrDefaultAsync(g => g.Id == id);
+        }
+
+        public async Task<IEnumerable<Goods>> GetAllAsync()
+        {
+            return await _applicationDbContext.Goods
+                .Include(g => g.Category)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task UpdateAsync(Goods entity)
+        {
+            _applicationDbContext.Goods.Update(entity);
+            await _applicationDbContext.SaveChangesAsync();
         }
     }
 }

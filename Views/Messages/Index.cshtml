@@ -7,11 +7,11 @@
 }
 else
 {
-    <h1>Список подписок</h1>
+    <h1>Избранные товары:</h1>
     foreach (var message in Model)
     {
         <div>
-            <p>Email: @message.RecipientEmail</p>
+            @* <p>Email: @message.RecipientEmail</p> *@
             <p>Товар: <a href="@message.GoodUrl">Ссылка на товар</a></p>
         </div>
     }

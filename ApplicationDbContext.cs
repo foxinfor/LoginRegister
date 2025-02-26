@@ -14,7 +14,6 @@ namespace LoginRegister
         }
 
         public DbSet<Category> Categories { get; set; }
-        //public DbSet<Mail> Mails { get; set; }
         public DbSet<Goods> Goods { get; set; }
         public DbSet<Message> Messages { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using LoginRegister.Models;
 using LoginRegister.Repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LoginRegister.Controllers
@@ -7,15 +8,18 @@ namespace LoginRegister.Controllers
     public class MessagesController : Controller
     {
         private readonly MessageRepository _messageRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public MessagesController(MessageRepository messageRepository)
+        public MessagesController(MessageRepository messageRepository, UserManager<ApplicationUser> userManager)
         {
             _messageRepository = messageRepository;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
         {
-            var messages = await _messageRepository.GetAllMessagesAsync(); 
+            var user = await _userManager.GetUserAsync(User);
+            var messages = await _messageRepository.GetMessagesByRecipientEmailAsync(user.Email);
             return View(messages); 
         }
 
