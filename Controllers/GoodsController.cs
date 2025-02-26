@@ -76,6 +76,7 @@ namespace LoginRegister.Controllers
                 existingGood.Size = model.Size;
                 existingGood.CategoryId = model.CategoryId;
                 existingGood.Gender = model.Gender;
+                existingGood.Price = model.Price;
 
                 await _goodsRepository.UpdateAsync(existingGood); 
                 return RedirectToAction(nameof(Index));

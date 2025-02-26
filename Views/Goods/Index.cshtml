@@ -25,6 +25,7 @@
             <th>Название</th>
             <th>Количество</th>
             <th>Фото</th>
+            <th>Цена</th>
             @if (User.Identity.IsAuthenticated)
             {
                 <th>Действия</th>
@@ -39,6 +40,7 @@
                 <td>@item.Name</td>
                 <td>@item.Count</td>
                 <td><img src="@item.ImageSrc" alt="@item.Name" /></td>
+                <td>@item.Price</td>
                 <td>
                     @if (User.IsInRole("Администратор"))
                     {

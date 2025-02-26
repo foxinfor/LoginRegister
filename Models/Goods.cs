@@ -16,5 +16,7 @@
         public int Size { get; set; }
 
         public string Gender { get; set; }
+
+        public int Price { get; set; }
     }
 }
