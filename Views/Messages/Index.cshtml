@@ -1,6 +1,5 @@
 ﻿@model IEnumerable<LoginRegister.Models.Message>
 
-
 @if (!Model.Any())
 {
     <p>Нет подписок.</p>
@@ -11,11 +10,9 @@ else
     foreach (var message in Model)
     {
         <div>
-            @* <p>Email: @message.RecipientEmail</p> *@
             <a href="@message.GoodUrl">
                 <img src="@message.ImageUrl"></img>
             </a>
-            @* <p>Товар: <a href="@message.GoodUrl">Ссылка на товар</a></p> *@
         </div>
     }
 }
