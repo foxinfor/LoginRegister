@@ -36,5 +36,26 @@ namespace LoginRegister.Controllers
             await _messageRepository.AddMessageAsync(message);
             return Ok();
         }
+        public async Task<IActionResult> Delete(int id)
+        {
+            var message = await _messageRepository.GetAsync(id);
+            if (message == null)
+            {
+                return NotFound();
+            }
+            return View(message);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var message = await _messageRepository.GetAsync(id);
+            if (message != null)
+            {
+                await _messageRepository.DeleteAsync(message);
+            }
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

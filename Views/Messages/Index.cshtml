@@ -13,6 +13,7 @@ else
             <a href="@message.GoodUrl">
                 <img src="@message.ImageUrl"></img>
             </a>
+            <a asp-action="Delete" asp-route-id="@message.Id" class="btn btn-danger">Удалить</a>
         </div>
     }
 }

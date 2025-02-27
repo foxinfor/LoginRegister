@@ -1,7 +1,15 @@
 ﻿@model IEnumerable<LoginRegister.Models.Category>
 
-<h1>Список категорий</h1>
 
+
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+    <h1>Список категорий</h1>
+    @if (User.IsInRole("Администратор"))
+    {
+        <a asp-action="Create" class="btn btn-success">Добавить категорию</a>
+    }
+</div>
 <table>
     <thead>
         <tr>
@@ -25,10 +33,5 @@
                 </td>
             </tr>
         }
-        
     </tbody>
 </table>
-@if (User.IsInRole("Администратор"))
-{
-    <a asp-action="Create" class="btn btn-success">Добавить категорию</a>
-}

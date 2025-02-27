@@ -30,5 +30,17 @@ namespace LoginRegister.Repository
                 .ToListAsync();
         }
 
+
+        public async Task<Message> GetAsync(int id)
+        {
+            return await _context.Messages
+                .FirstOrDefaultAsync(m => m.Id == id);
+        }
+
+        public async Task DeleteAsync(Message entity)
+        {
+            _context.Messages.Remove(entity);
+            await _context.SaveChangesAsync();
+        }
     }
 }
