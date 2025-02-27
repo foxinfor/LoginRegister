@@ -1,19 +1,24 @@
-﻿@model IEnumerable<LoginRegister.Models.Message>
+﻿@model Tuple<IEnumerable<LoginRegister.Models.Message>, IEnumerable<LoginRegister.Models.Goods>>
 
-@if (!Model.Any())
+@if (!Model.Item1.Any())
 {
     <p>Нет подписок.</p>
 }
 else
 {
     <h1>Избранные товары:</h1>
-    foreach (var message in Model)
+    foreach (var message in Model.Item1)
     {
-        <div>
-            <a href="@message.GoodUrl">
-                <img src="@message.ImageUrl"></img>
-            </a>
-            <a asp-action="Delete" asp-route-id="@message.Id" class="btn btn-danger">Удалить</a>
-        </div>
+        var good = Model.Item2.FirstOrDefault(g => g.Id == message.GoodId);
+        if (good != null)
+        {
+            <div>
+                <a href="@message.GoodUrl">
+                    <img src="@good.ImageSrc" style="max-width: 200px; max-height: 200px;" />
+                </a>
+                <p>@good.Name</p>
+                <a asp-action="Delete" asp-route-id="@message.Id" class="btn btn-danger">Удалить</a>
+            </div>
+        }
     }
 }

@@ -9,18 +9,26 @@ namespace LoginRegister.Controllers
     {
         private readonly MessageRepository _messageRepository;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly GoodsRepository goodsRepository;
 
-        public MessagesController(MessageRepository messageRepository, UserManager<ApplicationUser> userManager)
+        public MessagesController(MessageRepository messageRepository, UserManager<ApplicationUser> userManager, GoodsRepository goodsRepository)
         {
             _messageRepository = messageRepository;
             _userManager = userManager;
+            this.goodsRepository = goodsRepository;
         }
 
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
             var messages = await _messageRepository.GetMessagesByRecipientEmailAsync(user.Email);
-            return View(messages); 
+
+
+            var goodIds = messages.Select(m => m.GoodId).Distinct().ToList();
+            var goods = await goodsRepository.GetGoodsByIdsAsync(goodIds);
+
+            var model = new Tuple<IEnumerable<Message>, IEnumerable<Goods>>(messages, goods);
+            return View(model);
         }
 
         [HttpPost]

@@ -56,5 +56,12 @@ namespace LoginRegister.Repository
                 .Where(g => subcategoryIds.Contains(g.CategoryId))
                 .ToListAsync();
         }
+
+        public async Task<List<Goods>> GetGoodsByIdsAsync(IEnumerable<int> goodIds)
+        {
+            return await _applicationDbContext.Goods
+                .Where(g => goodIds.Contains(g.Id))
+                .ToListAsync();
+        }
     }
 }
