@@ -22,13 +22,16 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Mail" asp-action="Index" asp-route-email=@User.Identity.Name>Сообщения</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Messages" asp-action="Index" asp-route-email=@User.Identity.Name>Избранные товары</a>
                             </li>
                             @if (User.IsInRole("Администратор"))
                             {
                                 
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Persons" asp-action="Index" asp-route-email=@User.Identity.Name>Пользователи</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Categories" asp-action="Index">Категории</a>
                                 </li>
                                 
                             }

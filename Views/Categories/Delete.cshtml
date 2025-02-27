@@ -1,0 +1,13 @@
+﻿@model LoginRegister.Models.Category
+
+<h1>Удалить категорию</h1>
+
+<h4>Вы уверены, что хотите удалить категорию <strong>@Model.Name</strong>?</h4>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <input type="submit" value="Удалить" class="btn btn-danger" />
+        <a asp-action="Index" class="btn btn-secondary">Назад</a>
+    </div>
+</form>

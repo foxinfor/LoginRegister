@@ -6,41 +6,55 @@ namespace LoginRegister.Repository
     public class GoodsRepository
     {
         private readonly ApplicationDbContext _applicationDbContext;
+        private readonly CategoryRepository _categoryRepository;
 
-        public GoodsRepository(ApplicationDbContext applicationDbContext)
+        public GoodsRepository(ApplicationDbContext applicationDbContext, CategoryRepository categoryRepository)
         {
             _applicationDbContext = applicationDbContext;
+            _categoryRepository = categoryRepository;
         }
 
-        public void Add(Goods entity)
+        public async Task AddAsync(Goods entity)
         {
-            _applicationDbContext.Goods.Add(entity);
-            _applicationDbContext.SaveChanges();
+            await _applicationDbContext.Goods.AddAsync(entity);
+            await _applicationDbContext.SaveChangesAsync();
         }
 
-        public void Delete(Goods entity)
+        public async Task DeleteAsync(Goods entity)
         {
             _applicationDbContext.Goods.Remove(entity);
-            _applicationDbContext.SaveChanges();
+            await _applicationDbContext.SaveChangesAsync();
         }
 
-        public Goods Get(int id)
+        public async Task<Goods> GetAsync(int id)
         {
-            return _applicationDbContext.Goods.Find(id);
+            return await _applicationDbContext.Goods
+                .Include(g => g.Category)
+                .FirstOrDefaultAsync(g => g.Id == id);
         }
 
-        public IEnumerable<Goods> GetAll()
+        public async Task<IEnumerable<Goods>> GetAllAsync()
         {
-            return _applicationDbContext.Goods
+            return await _applicationDbContext.Goods
                 .Include(g => g.Category)
                 .AsNoTracking()
-                .ToList();
+                .ToListAsync();
         }
 
-        public void Update(Goods entity)
+        public async Task UpdateAsync(Goods entity)
         {
             _applicationDbContext.Goods.Update(entity);
-            _applicationDbContext.SaveChanges();
+            await _applicationDbContext.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Goods>> GetByCategoryWithSubcategoriesAsync(int categoryId)
+        {
+            var subCategories = await _categoryRepository.GetSubCategoriesAsync(categoryId);
+            var subcategoryIds = subCategories.Select(c => c.Id).ToList();
+
+            return await _applicationDbContext.Goods
+                .Where(g => subcategoryIds.Contains(g.CategoryId))
+                .ToListAsync();
         }
     }
 }

@@ -5,93 +5,165 @@
 
 <head>
     <link rel="stylesheet" type="text/css" href="~/css/main.css" />
+    <style>
+        .category-menu {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .category-item {
+            position: relative;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+            .category-item:hover {
+                background-color: #e2e6ea;
+            }
+
+        .subcategory-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            z-index: 1000;
+        }
+
+        .category-item:hover .subcategory-menu {
+            display: block;
+        }
+
+        .subcategory-item {
+            background-color: #e2e6ea;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+            .subcategory-item:hover {
+                background-color: #e2e6ea;
+            }
+
+        .sub-subcategory-menu {
+            display: none;
+            position: relative;
+            left: 100%;
+            top: 0;
+        }
+
+        .subcategory-item:hover .sub-subcategory-menu {
+            display: block;
+        }
+    </style>
 </head>
 
-<h1>Список товаров</h1>
+<body>
+    <h1>Список товаров</h1>
 
-<label for="categorySelect">Выберите категорию:</label>
-<select id="categorySelect" class="form-select" onchange="filterByCategory(this.value)">
-    <option value="">Все категории</option>
-    @foreach (var category in categories)
-    {
-        <option value="@category.Id">@category.Name</option>
-    }
-</select>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Название</th>
-            <th>Количество</th>
-            <th>Фото</th>
-            @if (User.Identity.IsAuthenticated)
-            {
-                <th>Действия</th>
-            }
-        </tr>
-    </thead>
-    <tbody id="goodsTableBody">
-        @foreach (var item in Model)
+    <label for="categorySelect">Выберите категорию: </label>
+    <div class="category-menu">
+        @foreach (var category in categories.Where(c => c.ParentId == null))
         {
-            <tr data-category-id="@item.CategoryId">
-                <td>@item.Id</td>
-                <td>@item.Name</td>
-                <td>@item.Count</td>
-                <td><img src="@item.ImageSrc" alt="@item.Name" /></td>
-                <td>
-                    @if (User.IsInRole("Администратор"))
+            <div class="category-item" onclick="filterByCategory(event, @category.Id)">
+                @category.Name
+                <div class="subcategory-menu">
+                    @foreach (var subcategory in categories.Where(c => c.ParentId == category.Id)) 
                     {
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Редактировать</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
+                        <div class="subcategory-item" onclick="filterByCategory(event, @subcategory.Id)">
+                            @subcategory.Name
+                            <div class="sub-subcategory-menu">
+                                @foreach (var subSubcategory in categories.Where(c => c.ParentId == subcategory.Id))
+                                {
+                                    <div class="subcategory-item" onclick="filterByCategory(event, @subSubcategory.Id)">
+                                        @subSubcategory.Name
+                                    </div>
+                                }
+                            </div>
+                        </div>
                     }
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <button class="btn btn-info" onclick="subscribe(@item.Id)">Подписаться</button>
-                    }
-                </td>
+                </div>
+            </div>
+        }
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Название</th>
+                <th>Количество</th>
+                <th>Фото</th>
+                <th>Цена</th>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <th>Действия</th>
+                }
             </tr>
-        }
-    </tbody>
-</table>
-@if (User.IsInRole("Администратор"))
-{
-    <a asp-action="Create" class="btn btn-success">Добавить товар</a>
-}
-
-<script>
-    const userEmail = '@User.Identity.Name';
-
-    async function subscribe(goodId) {
-        if (!userEmail) {
-            alert('Вы не авторизованы. Пожалуйста, войдите в систему.');
-            return;
-        }
-
-        const response = await fetch('/Messages/Subscribe', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ GoodId: goodId, RecipientEmail: userEmail })
-        });
-
-        if (response.ok) {
-            alert('Вы успешно подписались!');
-        } else {
-            alert('Ошибка при подписке. Попробуйте еще раз.');
-        }
-    }
-
-        function filterByCategory(categoryId) {
-        const rows = document.querySelectorAll('#goodsTableBody tr');
-        rows.forEach(row => {
-            const rowCategoryId = row.getAttribute('data-category-id');
-            if (categoryId === "" || rowCategoryId == categoryId) {
-                row.style.display = ''; 
-            } else {
-                row.style.display = 'none'; 
+        </thead>
+        <tbody id="goodsTableBody">
+            @foreach (var item in Model)
+            {
+                <tr data-category-id="@item.CategoryId">
+                    <td>@item.Id</td>
+                    <td>@item.Name</td>
+                    <td>@item.Count</td>
+                    <td><img src="@item.ImageSrc" alt="@item.Name" /></td>
+                    <td>@item.Price</td>
+                    <td>
+                        @if (User.IsInRole("Администратор"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Редактировать</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
+                        }
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <button class="btn btn-info" onclick="subscribe(@item.Id, '@item.ImageSrc')">Добавить в избранное</button>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Подробнее</a>
+                        }
+                    </td>
+                </tr>
             }
-        });
+        </tbody>
+    </table>
+
+    @if (User.IsInRole("Администратор"))
+    {
+        <a asp-action="Create" class="btn btn-success">Добавить товар</a>
     }
-</script>
+
+    <script>
+        async function filterByCategory(event, categoryId) {
+            event.stopPropagation(); 
+            const response = await fetch(`/Goods/FilterByCategory?categoryId=${categoryId}`);
+            const goodsListHtml = await response.text();
+            document.getElementById('goodsTableBody').innerHTML = goodsListHtml;
+        }
+
+        const userEmail = '@User.Identity.Name';
+
+        async function subscribe(goodId, imageUrl) {
+            if (!userEmail) {
+                alert('Вы не авторизованы. Пожалуйста, войдите в систему.');
+                return;
+            }
+
+            const response = await fetch('/Messages/Subscribe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ GoodId: goodId, RecipientEmail: userEmail, ImageUrl: imageUrl })
+            });
+
+            if (response.ok) {
+                alert('Вы добавили товар в избранное!');
+            } else {
+                alert('Ошибка при подписке. Попробуйте еще раз.');
+            }
+        }
+    </script>
+</body>

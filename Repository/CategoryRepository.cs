@@ -12,37 +12,65 @@ namespace LoginRegister.Repository
             _applicationDbContext = applicationDbContext;
         }
 
-        public void Add(Category entity)
+        public async Task AddAsync(Category entity)
         {
-            _applicationDbContext.Categories.Add(entity);
-            _applicationDbContext.SaveChanges();
+            await _applicationDbContext.Categories.AddAsync(entity);
+            await _applicationDbContext.SaveChangesAsync();
         }
 
-        public void Delete(Category entity)
+        public async Task DeleteAsync(Category entity)
         {
             _applicationDbContext.Categories.Remove(entity);
-            _applicationDbContext.SaveChanges();
+            await _applicationDbContext.SaveChangesAsync();
         }
 
-        public Category Get(int id)
+        public async Task<Category> GetAsync(int id)
         {
-            return _applicationDbContext.Categories
-                .Include(c => c.SubCategories) 
-                .FirstOrDefault(c => c.Id == id);
+            return await _applicationDbContext.Categories
+                .Include(c => c.SubCategories)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public IEnumerable<Category> GetAll()
+        public async Task<IEnumerable<Category>> GetAllAsync()
         {
-            return _applicationDbContext.Categories
-                .Include(c => c.SubCategories) 
+            return await _applicationDbContext.Categories
+                .Include(c => c.SubCategories)
                 .AsNoTracking()
-                .ToList();
+                .ToListAsync();
         }
 
-        public void Update(Category entity)
+        public async Task UpdateAsync(Category entity)
         {
             _applicationDbContext.Categories.Update(entity);
-            _applicationDbContext.SaveChanges();
+            await _applicationDbContext.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Category>> GetAllWithoutSame(int id)
+        {
+            return await _applicationDbContext.Categories
+                .Include(c => c.SubCategories).Where(c => c.Id != id)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<List<Category>> GetSubCategoriesAsync(int categoryId)
+        {
+            var category = await _applicationDbContext.Categories
+                .Include(c => c.SubCategories)
+                .FirstOrDefaultAsync(c => c.Id == categoryId);
+
+            var subCategories = new List<Category>();
+
+            if (category != null)
+            {
+                subCategories.Add(category);
+                foreach (var subCategory in category.SubCategories)
+                {
+                    subCategories.AddRange(await GetSubCategoriesAsync(subCategory.Id));
+                }
+            }
+
+            return subCategories;
         }
     }
 }

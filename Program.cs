@@ -31,7 +31,7 @@ namespace LoginRegister
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
-            builder.Services.AddScoped<MailRepository>();
+            //builder.Services.AddScoped<MailRepository>();
             builder.Services.AddScoped<GoodsRepository>();
             builder.Services.AddScoped<MessageRepository>();
             builder.Services.AddScoped<CategoryRepository>();
