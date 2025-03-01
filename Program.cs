@@ -60,7 +60,7 @@ namespace LoginRegister
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Goods}/{action=Index}/{id?}");
 
             app.Run();
         }
